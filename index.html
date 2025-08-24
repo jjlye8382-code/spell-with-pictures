@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spell with Pictures</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        #game-area {
+            margin: 20px auto;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        #word-display {
+            font-size: 28px;
+            margin: 20px 0;
+            color: #333;
+            letter-spacing: 4px;
+        }
+        #image-hint {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            margin: 10px auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        #letter-buttons {
+            margin: 10px;
+        }
+        #letter-buttons button {
+            font-size: 18px;
+            padding: 10px 14px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+        }
+        #letter-buttons button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #letter-buttons button:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+        #feedback {
+            font-size: 22px;
+            color: green;
+            margin: 10px;
+            min-height: 30px;
+        }
+        #next-word-btn {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #next-word-btn:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-area">
+        <h1>Spell with Pictures</h1>
+        <div id="word-display">Word: </div>
+        <img id="image-hint" src="" alt="Hint image">
+        <div id="letter-buttons"></div>
+        <div id="feedback"></div>
+        <button id="next-word-btn" onclick="nextWord()">Next Word</button>
+    </div>
+
+    <script>
+        // Array of words with associated image files. Images are stored in the same directory as this HTML file.
+        const words = [
+            // Original sample words with their own images
+            { word: 'academy', image: 'academy.jpg' },
+            { word: 'accomplish', image: 'accomplish.png' },
+            { word: 'accord', image: 'accord.png' },
+            // Extended vocabulary from the uploaded spelling list.  These
+            // words currently use a generic placeholder image.  Feel free
+            // to replace 'placeholder.png' with appropriate pictures for
+            // each word.
+            { word: 'accident', image: 'placeholder.png' },
+            { word: 'accurate', image: 'placeholder.png' },
+            { word: 'acorn', image: 'placeholder.png' },
+            { word: 'activate', image: 'placeholder.png' },
+            { word: 'actually', image: 'placeholder.png' },
+            { word: 'addition', image: 'placeholder.png' },
+            { word: 'admire', image: 'placeholder.png' },
+            { word: 'affair', image: 'placeholder.png' },
+            { word: 'affect', image: 'placeholder.png' },
+            { word: 'algae', image: 'placeholder.png' },
+            { word: 'allergy', image: 'placeholder.png' },
+            { word: 'alloy', image: 'placeholder.png' },
+            { word: 'amendment', image: 'placeholder.png' },
+            { word: 'announce', image: 'placeholder.png' },
+            { word: 'anoint', image: 'placeholder.png' },
+            { word: 'antique', image: 'placeholder.png' },
+            { word: 'apostle', image: 'placeholder.png' },
+            { word: 'appeal', image: 'placeholder.png' },
+            { word: 'appearance', image: 'placeholder.png' },
+            { word: 'appointment', image: 'placeholder.png' },
+            { word: 'arrange', image: 'placeholder.png' },
+            { word: 'arrangement', image: 'placeholder.png' },
+            { word: 'arrive', image: 'placeholder.png' },
+            { word: 'article', image: 'placeholder.png' },
+            { word: 'ascend', image: 'placeholder.png' },
+            { word: 'aspect', image: 'placeholder.png' },
+            { word: 'assembly', image: 'placeholder.png' },
+            { word: 'associate', image: 'placeholder.png' },
+            { word: 'astronaut', image: 'placeholder.png' },
+            { word: 'atom', image: 'placeholder.png' },
+            { word: 'atomic', image: 'placeholder.png' },
+            { word: 'attachment', image: 'placeholder.png' },
+            // Second column of the spelling list
+            { word: 'eager', image: 'placeholder.png' },
+            { word: 'edge', image: 'placeholder.png' },
+            { word: 'education', image: 'placeholder.png' },
+            { word: 'efficient', image: 'placeholder.png' },
+            { word: 'effort', image: 'placeholder.png' },
+            { word: 'elsewhere', image: 'placeholder.png' },
+            { word: 'emergency', image: 'placeholder.png' },
+            { word: 'encounter', image: 'placeholder.png' },
+            { word: 'encourage', image: 'placeholder.png' },
+            { word: 'energy', image: 'placeholder.png' },
+            { word: 'entrance', image: 'placeholder.png' },
+            { word: 'equator', image: 'placeholder.png' },
+            { word: 'equipment', image: 'placeholder.png' },
+            { word: 'erect', image: 'placeholder.png' },
+            { word: 'exchange', image: 'placeholder.png' },
+            { word: 'excite', image: 'placeholder.png' },
+            { word: 'excitement', image: 'placeholder.png' },
+            { word: 'exist', image: 'placeholder.png' },
+            { word: 'explosion', image: 'placeholder.png' },
+            { word: 'express', image: 'placeholder.png' },
+            { word: 'expressive', image: 'placeholder.png' },
+            { word: 'farther', image: 'placeholder.png' },
+            { word: 'faucet', image: 'placeholder.png' },
+            { word: 'feather', image: 'placeholder.png' },
+            { word: 'February', image: 'placeholder.png' },
+            { word: 'federation', image: 'placeholder.png' },
+            { word: 'finance', image: 'placeholder.png' },
+            { word: 'firmament', image: 'placeholder.png' },
+            { word: 'flame', image: 'placeholder.png' },
+            { word: 'flashlight', image: 'placeholder.png' },
+            { word: 'flatter', image: 'placeholder.png' },
+            { word: 'flavor', image: 'placeholder.png' },
+            // Third column sample entries.  This list is not exhaustive but provides
+            // additional variety from the original photo.  You can continue
+            // adding more words following the same pattern.
+            { word: 'portion', image: 'placeholder.png' },
+            { word: 'practice', image: 'placeholder.png' },
+            { word: 'precious', image: 'placeholder.png' },
+            { word: 'predict', image: 'placeholder.png' },
+            { word: 'preparation', image: 'placeholder.png' },
+            { word: 'prick', image: 'placeholder.png' },
+            { word: 'pronunciation', image: 'placeholder.png' },
+            { word: 'prophecy', image: 'placeholder.png' },
+            { word: 'propose', image: 'placeholder.png' },
+            { word: 'pulp', image: 'placeholder.png' },
+            { word: 'punishment', image: 'placeholder.png' },
+            { word: 'purify', image: 'placeholder.png' },
+            { word: 'quality', image: 'placeholder.png' },
+            { word: 'quarter', image: 'placeholder.png' },
+            { word: 'quiet', image: 'placeholder.png' },
+            { word: 'quite', image: 'placeholder.png' },
+            { word: 'rarely', image: 'placeholder.png' },
+            { word: 'readily', image: 'placeholder.png' },
+            { word: 'realize', image: 'placeholder.png' },
+            { word: 'repair', image: 'placeholder.png' },
+            { word: 'release', image: 'placeholder.png' },
+            { word: 'relief', image: 'placeholder.png' },
+            { word: 'retreat', image: 'placeholder.png' },
+            { word: 'revival', image: 'placeholder.png' },
+            { word: 'rivalry', image: 'placeholder.png' },
+            { word: 'rootstock', image: 'placeholder.png' },
+            // Additional sample words beyond the third column
+            { word: 'warmth', image: 'placeholder.png' },
+            { word: 'wealth', image: 'placeholder.png' },
+            { word: 'weary', image: 'placeholder.png' },
+            { word: 'weather', image: 'placeholder.png' },
+            { word: 'weave', image: 'placeholder.png' },
+            { word: 'woodchuck', image: 'placeholder.png' },
+            { word: 'worthy', image: 'placeholder.png' },
+            { word: 'worn', image: 'placeholder.png' },
+            { word: 'wrist', image: 'placeholder.png' },
+            { word: 'yawn', image: 'placeholder.png' }
+        ];
+
+        let currentIndex = 0;
+        let currentWord = '';
+        let usedLetters = [];
+
+        /**
+         * Speak a word aloud using the browser's SpeechSynthesis API.
+         * If the API is unavailable, the function silently fails.
+         * @param {string} text The word to speak.
+         */
+        function speakWord(text) {
+            if ('speechSynthesis' in window) {
+                try {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    window.speechSynthesis.speak(utterance);
+                } catch (err) {
+                    console.error('Speech synthesis failed:', err);
+                }
+            }
+        }
+
+        /**
+         * Load the current word, update the UI and speak it.
+         */
+        function loadWord() {
+            const wordObj = words[currentIndex];
+            currentWord = wordObj.word;
+            usedLetters = [];
+
+            // Display underscores for each letter
+            const wordDisplay = document.getElementById('word-display');
+            wordDisplay.textContent = 'Word: ' + '_'.repeat(currentWord.length);
+
+            // Set image
+            const img = document.getElementById('image-hint');
+            img.src = wordObj.image;
+            img.alt = currentWord;
+
+            // Clear previous buttons and feedback
+            const letterButtons = document.getElementById('letter-buttons');
+            letterButtons.innerHTML = '';
+            document.getElementById('feedback').textContent = '';
+
+            // Speak the word aloud using the speech synthesis API
+            speakWord(currentWord);
+
+            // Shuffle letters and create buttons
+            const letters = currentWord.split('').sort(() => Math.random() - 0.5);
+            letters.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.textContent = letter;
+                btn.addEventListener('click', function() {
+                    checkLetter(letter, btn);
+                });
+                letterButtons.appendChild(btn);
+            });
+        }
+
+        /**
+         * Handle clicking on a letter button. Reveals all instances of the letter in the word display and disables the button.
+         * @param {string} letter The letter that was clicked.
+         * @param {HTMLElement} btn The button element that was clicked.
+         */
+        function checkLetter(letter, btn) {
+            if (usedLetters.includes(letter)) {
+                return;
+            }
+            usedLetters.push(letter);
+            btn.disabled = true;
+
+            // Reveal letter(s) in the displayed word
+            const wordDisplay = document.getElementById('word-display');
+            let displayArray = wordDisplay.textContent.replace('Word: ', '').split('');
+            for (let i = 0; i < currentWord.length; i++) {
+                if (currentWord[i] === letter) {
+                    displayArray[i] = letter;
+                }
+            }
+            wordDisplay.textContent = 'Word: ' + displayArray.join('');
+
+            // Check if word is completely revealed
+            if (!displayArray.includes('_')) {
+                document.getElementById('feedback').textContent = 'Great job! 🎉';
+                // Automatically move to next word after a short delay
+                setTimeout(nextWord, 2000);
+            }
+        }
+
+        /**
+         * Advance to the next word in the list and load it. Loops back to the first word after the last one.
+         */
+        function nextWord() {
+            currentIndex = (currentIndex + 1) % words.length;
+            loadWord();
+        }
+
+        // Initialise the game when the page loads
+        window.onload = loadWord;
+    </script>
+</body>
+</html>
