@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meeting Recorder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Meeting Recorder</h1>
+    <nav>
+      <button id="nav-record">Record</button>
+      <button id="nav-history">History</button>
+    </nav>
+  </header>
+
+  <main id="view-record">
+    <section id="recorder">
+      <div id="status">Idle</div>
+      <div id="controls">
+        <button id="start-btn">Start</button>
+        <button id="pause-btn" disabled>Pause</button>
+        <button id="stop-btn" disabled>Stop</button>
+      </div>
+      <div id="language-select">
+        <label for="lang">Language:</label>
+        <select id="lang">
+          <option value="en-US">English</option>
+          <option value="ms-MY">Bahasa Malaysia</option>
+          <option value="zh-CN">Chinese</option>
+          <option value="yue-Hant-HK">Cantonese</option>
+          <option value="nan-TW">Hokkien</option>
+        </select>
+      </div>
+      <div id="transcript"></div>
+    </section>
+
+    <section id="summary" hidden>
+      <h2>Summary</h2>
+      <pre id="summary-text"></pre>
+      <h3>Action Plan</h3>
+      <ul id="action-list"></ul>
+      <button id="export-btn">Export</button>
+      <button id="share-btn">Share</button>
+    </section>
+  </main>
+
+  <main id="view-history" hidden>
+    <h2>Meeting History</h2>
+    <input type="search" id="search" placeholder="Search by title or topic" />
+    <ul id="meeting-list"></ul>
+  </main>
+
+  <script src="../src/app.js"></script>
+</body>
+</html>

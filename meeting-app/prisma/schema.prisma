@@ -1,0 +1,61 @@
+// Prisma schema for meeting recorder app
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Meeting {
+  id          String      @id @default(cuid())
+  title       String
+  language    String
+  createdAt   DateTime    @default(now())
+  recording   Recording?
+  transcript  Transcript?
+  summary     Summary?
+  topics      Topic[]
+  actions     ActionPlan[]
+}
+
+model Recording {
+  id        String   @id @default(cuid())
+  meeting   Meeting  @relation(fields: [meetingId], references: [id])
+  meetingId String   @unique
+  url       String
+  duration  Int?
+}
+
+model Transcript {
+  id        String   @id @default(cuid())
+  meeting   Meeting  @relation(fields: [meetingId], references: [id])
+  meetingId String   @unique
+  text      String
+}
+
+model Summary {
+  id        String   @id @default(cuid())
+  meeting   Meeting  @relation(fields: [meetingId], references: [id])
+  meetingId String   @unique
+  text      String
+}
+
+model Topic {
+  id        String   @id @default(cuid())
+  name      String
+  meeting   Meeting? @relation(fields: [meetingId], references: [id])
+  meetingId String?
+}
+
+model ActionPlan {
+  id        String   @id @default(cuid())
+  meeting   Meeting? @relation(fields: [meetingId], references: [id])
+  meetingId String?
+  task      String
+  assignee  String?
+  dueDate   DateTime?
+  completed Boolean   @default(false)
+}
